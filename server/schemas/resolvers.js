@@ -1,13 +1,13 @@
 const {User, Book} = require('../models');
 
-const revolvers = {
+const resolvers = {
     Query: {
         user: async() => {
             return User.find({});
         },
         books: async(parent, {_id}) =>{
             const params = _id? {_id} : {};
-            return Book;
+            return Book.find(params);
         },
     },
     Mutation: {
