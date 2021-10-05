@@ -1,4 +1,6 @@
+
 const {User, Book} = require('../models');
+
 
 const resolvers = {
     Query: {
@@ -15,6 +17,13 @@ const resolvers = {
             const book = await Book.create(args);
             return book;
         },
+    Mutation: {
+        createUser: async (parent, args) => {
+            const user = await User.create(args);
+            return user;
+        }
+    }
+       
 
     }
 };
