@@ -4,28 +4,46 @@ const {User, Book} = require('../models');
 
 const resolvers = {
     Query: {
-        user: async() => {
-            return User.find({});
+       client: async (parent, args, context) => {
+            if (context.user) {
+                const userData = await User.findOne({ _id: context.user._id }).select('-__v -password')
+                console.log(userData);
+                return userData;   
+            }
         },
-        books: async(parent, {_id}) =>{
-            const params = _id? {_id} : {};
-            return Book.find(params);
-        },
-    },
-    Mutation: {
-        createBook: async (parent, args) => {
-            const book = await Book.create(args);
-            return book;
-        },
-    Mutation: {
-        createUser: async (parent, args) => {
-            const user = await User.create(args);
-            return user;
+
+        Mutation : {
+            login:  async (parent, { username, password }) => {
+                const user = await User.findOne({ username });
+                if (!user) {
+                    throw new AuthenticationError('No user found with this email address');
+                    const correctPw = await user.isCorrectPassword(password);
+                
+                }
+                const token = signToken(user);
+                return { token, user };
+            },
+            addUser: async (parent, { username, password }) => {
+                const user = await User.create({ username, password });
+                const token = signToken(user);
+                return { token, user };
+            },
+
+            bookSave: async (parent, { bookInfo }, context) => {
+                console.log(context.user)
+                if (context.user) {
+                    const updatedUser = await User.findByIdAndUpdate(
+                        { _id: context.user._id },
+                        { $push: { bookSaved: bookInfo }},                
+                        { new: true }
+                    ).populate('bookSaved');
+                    return updatedUser;
+                    }
+                }
         }
     }
-       
 
-    }
-};
+
+}
 
 module.exports = resolvers;
