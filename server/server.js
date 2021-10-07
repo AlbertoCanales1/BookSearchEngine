@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require("mongoose");
 const path = require('path');
 const {ApolloServer} = require('apollo-server-express');
 const db = require('./config/connection');
@@ -6,6 +7,18 @@ const { typeDefs, resolvers } = require('./schemas');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+mongoose.connect(
+  process.env.MONGODB_URI || 'mongodb://localhost/budget',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  },
+);
+
+
 
 async function startApolloServer() {
   const server = new ApolloServer({
