@@ -11,6 +11,7 @@ const resolvers = {
                 return userData;   
             }
         },
+    },
 
         Mutation : {
             login:  async (parent, {  email, password }) => {
@@ -42,7 +43,7 @@ const resolvers = {
                     }
                 }
         }
-    }
+
 
 
 }
